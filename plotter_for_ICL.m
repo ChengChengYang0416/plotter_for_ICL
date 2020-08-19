@@ -3,8 +3,9 @@ close all;
 Jxx = 0.0347563;
 Jyy = 0.0458929;
 Jzz = 0.0977;
+mass = 1.56779;
 sim_t = 50;
-bag = rosbag("geo_big_inertia.bag");
+bag = rosbag("2020-08-19-14-47-16.bag");
 
 clock = select(bag, 'topic', 'clock');
 clock_msgStructs = readMessages(clock, 'DataFormat', 'struct');
@@ -13,37 +14,42 @@ total_time = time(end) - time(1);
 time_ratio = sim_t/total_time;
 
 theta_hat = select(bag, 'topic', 'theta_hat');
+theta_m_hat = select(bag, 'topic', 'theta_m_hat');
 theta_hat_msgStructs = readMessages(theta_hat, 'DataFormat', 'struct');
+theta_m_hat_msgStructs = readMessages(theta_m_hat, 'DataFormat', 'struct');
 theta_hat_x = cellfun(@(m) double(m.X), theta_hat_msgStructs);
 theta_hat_y = cellfun(@(m) double(m.Y), theta_hat_msgStructs);
 theta_hat_z = cellfun(@(m) double(m.Z), theta_hat_msgStructs);
+theta_m_hat_R = cellfun(@(m) double(m.Z), theta_m_hat_msgStructs);
 theta_hat_x = theta_hat_x(1:(int32((length(theta_hat_x)*time_ratio))));
 theta_hat_y = theta_hat_y(1:(int32((length(theta_hat_y)*time_ratio))));
 theta_hat_z = theta_hat_z(1:(int32((length(theta_hat_z)*time_ratio))));
+theta_m_hat_R = theta_m_hat_R(1:(int32((length(theta_m_hat_R)*time_ratio))));
 t_theta = linspace(0, sim_t, length(theta_hat_x));
 
 figure(1);
 subplot(3, 1, 1);
 plot(t_theta, theta_hat_x, 'LineWidth', 1.5);
-y = ylabel('$J_{xx}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
-set(y, 'Units', 'Normalized', 'Position', [-0.08, 0.41]);
+y = ylabel('$\hat{J}_{xx}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
 yline(Jxx, 'm', 'LineWidth', 1.5);
 ylim([-0.02, 0.1]);
 legend('$\hat{J}_{xx}$', '$J_{xx}$', 'Interpreter', 'latex');
-title('$Moment$ $of$ $Inertia$ $(kgm^{2}$)', 'Interpreter', 'latex')
+title('$Estimated$ $Moment$ $of$ $Inertia$ $(kgm^{2}$)', 'Interpreter', 'latex')
 
 subplot(3, 1, 2);
 plot(t_theta, theta_hat_y, 'LineWidth', 1.5);
-y = ylabel('$J_{yy}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
-set(y, 'Units', 'Normalized', 'Position', [-0.08, 0.41]);
+y = ylabel('$\hat{J}_{yy}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
 yline(Jyy, 'm', 'LineWidth', 1.5);
 ylim([-0.02, 0.1]);
 legend('$\hat{J}_{yy}$', '$J_{yy}$', 'Interpreter', 'latex');
 
 subplot(3, 1, 3);
 plot(t_theta, theta_hat_z, 'LineWidth', 1.5);
-y = ylabel('$J_{zz}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
-set(y, 'Units', 'Normalized', 'Position', [-0.08, 0.41]);
+y = ylabel('$\hat{J}_{zz}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
+xlabel('$Time(sec)$', 'Interpreter', 'latex');
 yline(Jzz, 'm', 'LineWidth', 1.5);
 ylim([-0.5, 0.5]);
 legend('$\hat{J}_{zz}$', '$J_{zz}$', 'Interpreter', 'latex');
@@ -62,6 +68,15 @@ set(gca,'Yscale','log');
 title('$Estimate$ $errors$', 'Interpreter', 'latex');
 ylim([0.001, 310]);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
+
+figure(3)
+plot(t_theta, theta_m_hat_R, 'LineWidth', 1.5);
+y = ylabel('$\hat{\theta}_{m}$', 'Interpreter', 'latex', 'rotation', 0);
+set(y, 'Units', 'Normalized', 'Position', [-0.095, 0.46]);
+xlabel('$Time(sec)$', 'Interpreter', 'latex');
+yline(mass, 'm', 'LineWidth', 1.5);
+legend('$\hat{\theta}_{m}$', '$\theta_{m}$', 'Interpreter', 'latex');
+title('$Estimated$ $Mass$ $of$ $the$ $Multirotor$ $(kg)$', 'Interpreter', 'latex')
 
 %% plot the error of the state
 
@@ -101,11 +116,11 @@ error_velocity_z = error_velocity_z(1:(int32((length(error_velocity_z)*time_rati
 error_angu_rate_x = error_angu_rate_x(1:(int32((length(error_angu_rate_x)*time_ratio_error))));
 error_angu_rate_y = error_angu_rate_y(1:(int32((length(error_angu_rate_y)*time_ratio_error))));
 error_angu_rate_z = error_angu_rate_z(1:(int32((length(error_angu_rate_z)*time_ratio_error))));
-error_position_z = error_position_z - 0.04;
+error_position_z = error_position_z - 0.0;
 
 t_error = linspace(0, sim_t, length(error_position_x));
 
-figure(3)
+figure(4)
 subplot(3, 1, 1);
 plot(t_error, error_position_x, 'LineWidth', 1.5);
 y = ylabel('$e_{p_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
@@ -121,7 +136,7 @@ y = ylabel('$e_{p_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
-figure(4)
+figure(5)
 subplot(3, 1, 1);
 plot(t_error, error_angle_x, 'LineWidth', 1.5)
 y = ylabel('$e_{v_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
@@ -137,7 +152,7 @@ y = ylabel('$e_{v_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
-figure(5)
+figure(6)
 subplot(4, 1, 1);
 plot(t_error, error_velocity_x, 'LineWidth', 1.5)
 y = ylabel('$e_{R_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
@@ -158,7 +173,7 @@ set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 title('$\Psi$', 'Interpreter', 'latex', 'FontSize', 10)
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
-figure(6)
+figure(7)
 subplot(3, 1, 1);
 plot(t_error, error_angu_rate_x, 'LineWidth', 1.5)
 y = ylabel('$e_{\Omega_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
@@ -197,7 +212,7 @@ for i = 1:6
 end
 
 t_rotor = linspace(0, sim_t, length(motor_speed_arr_re(1, :)));
-figure(7)
+figure(8)
 subplot(6, 1, 1);
 plot(t_rotor, motor_speed_arr_re(1, :), 'LineWidth', 1.5);
 y = ylabel('$\Omega_{1}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
