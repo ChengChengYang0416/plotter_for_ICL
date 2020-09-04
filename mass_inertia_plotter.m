@@ -29,31 +29,40 @@ t_theta = linspace(0, sim_t, length(theta_hat_x));
 t_theta_m = linspace(0, sim_t, length(theta_m_hat_R));
 
 figure(1);
-subplot(3, 1, 1);
+subplot(4, 1, 1);
 plot(t_theta, theta_hat_x, 'LineWidth', 1.5);
 y = ylabel('$\hat{J}_{xx}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
 yline(Jxx, 'm', 'LineWidth', 1.5);
 ylim([-0.02, 0.1]);
 legend('$\hat{J}_{xx}$', '$J_{xx}$', 'Interpreter', 'latex');
-title('$Estimated$ $Moment$ $of$ $Inertia$ $(kgm^{2}$)', 'Interpreter', 'latex')
+title('$Estimated$ $Moment$ $of$ $Inertia$ $and$ $Mass$', 'Interpreter', 'latex')
 
-subplot(3, 1, 2);
+subplot(4, 1, 2);
 plot(t_theta, theta_hat_y, 'LineWidth', 1.5);
 y = ylabel('$\hat{J}_{yy}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
 yline(Jyy, 'm', 'LineWidth', 1.5);
-ylim([-0.02, 0.1]);
+ylim([-0.05, 0.18]);
 legend('$\hat{J}_{yy}$', '$J_{yy}$', 'Interpreter', 'latex');
 
-subplot(3, 1, 3);
+subplot(4, 1, 3);
 plot(t_theta, theta_hat_z, 'LineWidth', 1.5);
 y = ylabel('$\hat{J}_{zz}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
-xlabel('$Time(sec)$', 'Interpreter', 'latex');
+
 yline(Jzz, 'm', 'LineWidth', 1.5);
 ylim([-0.5, 0.5]);
 legend('$\hat{J}_{zz}$', '$J_{zz}$', 'Interpreter', 'latex');
+
+subplot(4, 1, 4);
+plot(t_theta_m, theta_m_hat_R, 'LineWidth', 1.5);
+y = ylabel('$\hat{\theta}_{m}$', 'Interpreter', 'latex', 'rotation', 0);
+set(y, 'Units', 'Normalized', 'Position', [-0.095, 0.46]);
+yline(mass, 'm', 'LineWidth', 1.5);
+ylim([0, 3]);
+legend('$\hat{\theta}_{m}$', '$\theta_{m}$', 'Interpreter', 'latex');
+xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
 theta_error = [theta_hat_x - Jxx, theta_hat_y - Jyy, theta_hat_z - Jzz];
 theta = [theta_hat_x, theta_hat_y, theta_hat_z];
@@ -63,12 +72,18 @@ for i = 1:length(theta)
 end
 figure(2)
 plot(t_theta, theta_error_norm, 'LineWidth', 1.5);
-y = ylabel('$\frac{\left\Vert \widetilde{\theta}\right\Vert }{\left\Vert \theta\right\Vert }$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+hold on;
+e_theta_m = theta_m_hat_R - mass;
+e_theta_m = abs(e_theta_m/mass);
+plot(t_theta_m, e_theta_m, 'LineWidth', 1.5);
+y = ylabel('$\frac{\left\Vert \tilde{\theta}\right\Vert }{\left\Vert \theta\right\Vert }$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.115, 0.45]);
 set(gca,'Yscale','log');
-title('$Estimate$ $errors$', 'Interpreter', 'latex');
-ylim([0.001, 310]);
-xlabel('$Time(sec)$', 'Interpreter', 'latex');
+set(gca,'ytick',[10^(-4) 10^(-3) 10^(-2) 10^(-1) 10^(0) 10^(1) 10^(2)]);
+title('$Error$ $of$ $Estimate$', 'Interpreter', 'latex', 'FontSize', 9);
+ylim([0.00001, 310]);
+legend('$\frac{\left\Vert \tilde{\theta}_{diag}\right\Vert }{\left\Vert \theta_{diag}\right\Vert }$', '$\frac{\left\Vert \tilde{\theta}_{m}\right\Vert }{\left\Vert \theta_{m}\right\Vert }$', 'Interpreter', 'latex');
+xlabel('$Time(sec)$', 'Interpreter', 'latex', 'FontSize', 9);
 
 figure(3)
 subplot(2, 1, 1)
@@ -134,71 +149,88 @@ t_error = linspace(0, sim_t, length(error_position_x));
 figure(4)
 subplot(3, 1, 1);
 plot(t_error, error_position_x, 'LineWidth', 1.5);
-y = ylabel('$e_{p_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{x_{1}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 title('$Position$ $Error$ $(m)$', 'Interpreter', 'latex', 'FontSize', 10)
+ylim([-0.1, 0.4]);
+
 subplot(3, 1, 2);
 plot(t_error, error_position_y, 'LineWidth', 1.5);
-y = ylabel('$e_{p_{y}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{x_{2}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
+ylim([-0.7, 0.21]);
+
 subplot(3, 1, 3);
 plot(t_error, error_position_z, 'LineWidth', 1.5);
-y = ylabel('$e_{p_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{x_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
+ylim([-1.5, 0.4]);
 
 figure(5)
 subplot(3, 1, 1);
 plot(t_error, error_angle_x, 'LineWidth', 1.5)
-y = ylabel('$e_{v_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{v_{1}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 title('$Velocity$ $Error$ $(m/s)$', 'Interpreter', 'latex', 'FontSize', 10)
+ylim([-0.1, 0.2]);
+
 subplot(3, 1, 2);
 plot(t_error, error_angle_y, 'LineWidth', 1.5)
-y = ylabel('$e_{v_{y}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{v_{2}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
+
 subplot(3, 1, 3);
 plot(t_error, error_angle_z, 'LineWidth', 1.5)
-y = ylabel('$e_{v_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{v_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
+ylim([-1, 0.5]);
 
 figure(6)
-subplot(4, 1, 1);
+subplot(3, 1, 1);
 plot(t_error, error_velocity_x, 'LineWidth', 1.5)
-y = ylabel('$e_{R_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{R_{1}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 title('$Attitude$ $Error$', 'Interpreter', 'latex', 'FontSize', 10)
-subplot(4, 1, 2);
+
+subplot(3, 1, 2);
 plot(t_error, error_velocity_y, 'LineWidth', 1.5)
-y = ylabel('$e_{R_{y}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{R_{2}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
-subplot(4, 1, 3);
+ylim([-0.3, 0.7]);
+
+subplot(3, 1, 3);
 plot(t_error, error_velocity_z, 'LineWidth', 1.5)
-y = ylabel('$e_{R_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{R_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
-subplot(4, 1, 4);
-plot(t_error, error_psi)
-y = ylabel('$\Psi$', 'Interpreter', 'latex', 'rotation', 0); grid on;
-set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
-title('$\Psi$', 'Interpreter', 'latex', 'FontSize', 10)
+ylim([-0.5, 1.5]);
+
+% subplot(4, 1, 4);
+% plot(t_error, error_psi)
+% y = ylabel('$\Psi$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+% set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
+% title('$\Psi$', 'Interpreter', 'latex', 'FontSize', 10)
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
 figure(7)
 subplot(3, 1, 1);
 plot(t_error, error_angu_rate_x, 'LineWidth', 1.5)
-y = ylabel('$e_{\Omega_{x}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{\Omega_{1}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 title('$Angular$ $Velocity$ $Error$', 'Interpreter', 'latex', 'FontSize', 10)
+
 subplot(3, 1, 2);
 plot(t_error, error_angu_rate_y, 'LineWidth', 1.5)
-y = ylabel('$e_{\Omega_{y}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{\Omega_{2}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
+
 subplot(3, 1, 3);
 plot(t_error, error_angu_rate_z, 'LineWidth', 1.5)
-y = ylabel('$e_{\Omega_{z}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
+y = ylabel('$e_{\Omega_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
+ylim([-0.2, 0.81]);
 
 %% plot the rotational speed of each rotor
 
