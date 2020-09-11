@@ -1,0 +1,39 @@
+kx = 6;
+kv = 4.7;
+kR_max = 3;
+kR_min = 0.15;
+kOmega_max = 0.52;
+kOmega_min = 0.18;
+C1 = 0.6;
+C2 = 0.01;
+J_max = 0.0977;
+J_min = 0.035;
+Psi_2 = 1;
+alpha = 0.1;
+m = 1.568;
+ev_max = 0.2;
+B = 1.7*(10^(-3))*1.7;
+
+C2_con1 = kOmega_min/J_max;
+C2_con2 = 4*kOmega_min*kR_min/(kOmega_max*kOmega_max+4*kR_max*J_max);
+C2_con3 = (kR_min*J_min/J_max*J_max)^0.5;
+M21 = 0.5*[kR -C2*J_max; -C2*J_max J_min];
+eig_M21 = eig(M21);
+M22 = 0.5*[2*kR/(2-Psi_2) C2*J_max; C2*J_max J_max];
+eig_M22 = eig(M22);
+W2 = [C2*kR 0.5*C2*kOmega_max; 0.5*C2*kOmega_max kOmega_max-C2*J_max];
+eig_W2 = eig(W2);
+
+C1_con1 = (kx/m)^0.5;
+C1_con2 = kv*(1-alpha)/m;
+C1_con3 = (4*kx*kv*(1-alpha)*(1-alpha))/(kv*kv*(1+alpha)*(1+alpha)+4*m*kx*(1-alpha));
+M11 = 0.5*[kx -C1*m; -C1*m m];
+eig_M11 = eig(M11);
+M12 = 0.5*[kx C1*m; C1*m m];
+eig_M12 = eig(M12);
+W1 = [kx*C1*(1-alpha) -0.5*C1*kv*(1+alpha); -0.5*C1*kv*(1+alpha) kv*(1-alpha)-C1*m];
+eig_W1 = eig(W1);
+
+W12 = [kx*ev_max+C1*B 0; B 0;];
+eig_W12 = eig(W12);
+norm_W12_square = norm(W12)*norm(W12);

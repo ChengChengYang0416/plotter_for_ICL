@@ -50,13 +50,12 @@ subplot(4, 1, 3);
 plot(t_theta, theta_hat_z, 'LineWidth', 1.5);
 y = ylabel('$\hat{J}_{zz}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.09, 0.41]);
-
 yline(Jzz, 'm', 'LineWidth', 1.5);
 ylim([-0.5, 0.5]);
 legend('$\hat{J}_{zz}$', '$J_{zz}$', 'Interpreter', 'latex');
 
 subplot(4, 1, 4);
-plot(t_theta_m, theta_m_hat_R, 'LineWidth', 1.5);
+plot(t_theta_m, theta_m_hat_R, 'LineWidth', 1.5); grid on;
 y = ylabel('$\hat{\theta}_{m}$', 'Interpreter', 'latex', 'rotation', 0);
 set(y, 'Units', 'Normalized', 'Position', [-0.095, 0.46]);
 yline(mass, 'm', 'LineWidth', 1.5);
@@ -205,12 +204,6 @@ plot(t_error, error_velocity_z, 'LineWidth', 1.5)
 y = ylabel('$e_{R_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
 ylim([-0.5, 1.5]);
-
-% subplot(4, 1, 4);
-% plot(t_error, error_psi)
-% y = ylabel('$\Psi$', 'Interpreter', 'latex', 'rotation', 0); grid on;
-% set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.41], 'FontSize', 10);
-% title('$\Psi$', 'Interpreter', 'latex', 'FontSize', 10)
 xlabel('$Time(sec)$', 'Interpreter', 'latex');
 
 figure(7)
