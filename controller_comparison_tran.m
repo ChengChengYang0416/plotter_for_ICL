@@ -38,12 +38,12 @@ error_position_z_ICL = error_position_z_ICL(1:(int32((length(error_position_z_IC
 t_error_ICL = linspace(0, sim_t, length(error_position_z_ICL));
 
 figure(1)
-plot(t_error, error_position_z, 'LineWidth', 1.5);
-hold on;
 plot(t_error_ICL, error_position_z_ICL, 'LineWidth', 1.5);
+hold on;
+plot(t_error, error_position_z, 'LineWidth', 1.5);
 y = ylabel('$e_{x_{3}}$', 'Interpreter', 'latex', 'rotation', 0); grid on;
 set(y, 'Units', 'Normalized', 'Position', [-0.11, 0.47]);
-legend('$without$ $ICL$', '$with$ $ICL$', 'Interpreter', 'latex');
+legend('$with$ $ICL$', '$without$ $ICL$', 'Interpreter', 'latex');
 xlabel('$Time(sec)$', 'Interpreter', 'latex', 'FontSize', 9);
 title('$Position$ $Error$ $in$ $z-direction$ $(m)$', 'Interpreter', 'latex', 'FontSize', 9)
 ylim([-1.4, 0.6]);
